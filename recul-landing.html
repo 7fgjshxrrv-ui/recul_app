@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Recul. — Ce qui te fait perdre de l'argent est déjà dans tes trades</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Space+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#14161A;
+    --bg-elev:#1B1E24;
+    --bg-elev-2:#22262E;
+    --text:#ECEAE3;
+    --text-muted:rgba(236,234,227,0.62);
+    --line:rgba(255,255,255,0.09);
+    --amber:#E8A23D;
+    --amber-ink:#1B1300;
+    --amber-glow:rgba(232,162,61,0.38);
+    --rust:#E2855F;
+    --teal:#5FC1A6;
+  }
+  :root[data-theme="light"]{
+    --bg:#EFF1EE;
+    --bg-elev:#F9FAF7;
+    --bg-elev-2:#FFFFFF;
+    --text:#1B2230;
+    --text-muted:rgba(27,34,48,0.66);
+    --line:rgba(27,34,48,0.10);
+    --amber:#B97A1C;
+    --amber-ink:#FFFFFF;
+    --amber-glow:rgba(185,122,28,0.16);
+    --rust:#A8462F;
+    --teal:#2F6B5E;
+  }
+
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+
+  body{
+    margin:0;
+    background-color:var(--bg);
+    background-image:radial-gradient(var(--line) 1px, transparent 1.5px);
+    background-size:24px 24px;
+    color:var(--text);
+    font-family:'Space Grotesk', sans-serif;
+    line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    transition:background-color 0.3s ease, color 0.3s ease;
+  }
+
+  .mono{font-family:'Space Mono', monospace;}
+  a{color:inherit;}
+  :focus-visible{outline:2px solid var(--amber); outline-offset:3px;}
+
+  .wrap{max-width:940px; margin:0 auto; padding:0 28px;}
+
+  /* ---------- NAV ---------- */
+  nav{padding:24px 0 0; position:relative; z-index:10;}
+  nav .wrap{display:flex; justify-content:space-between; align-items:center;}
+  .logo{font-weight:700; font-size:1.1rem; display:flex; align-items:center; gap:6px;}
+  .logo .dot{
+    width:8px; height:8px; border-radius:50%;
+    background:var(--amber);
+    box-shadow:0 0 10px 2px var(--amber-glow);
+  }
+  .nav-right{display:flex; align-items:center; gap:18px;}
+  .nav-tag{font-family:'Space Mono', monospace; font-size:0.76rem; color:var(--text-muted);}
+
+  .theme-toggle{
+    display:flex; align-items:center; justify-content:center;
+    width:38px; height:38px; border-radius:50%;
+    background:var(--bg-elev); border:1px solid var(--line);
+    cursor:pointer; color:var(--text);
+    transition:transform 0.15s ease, background 0.2s ease;
+  }
+  .theme-toggle:hover{transform:scale(1.06);}
+  .theme-toggle svg{width:17px; height:17px;}
+  .theme-toggle .icon-moon{display:none;}
+  [data-theme="light"] .theme-toggle .icon-sun{display:none;}
+  [data-theme="light"] .theme-toggle .icon-moon{display:block;}
+
+  /* ---------- HERO ---------- */
+  .hero{padding:70px 0 40px; position:relative; overflow:hidden;}
+  .hero::before{
+    content:"";
+    position:absolute; top:-180px; left:50%; transform:translateX(-50%);
+    width:900px; height:500px;
+    background:radial-gradient(closest-side, var(--amber-glow), transparent);
+    opacity:0.55; pointer-events:none; z-index:0;
+  }
+  .hero .wrap{position:relative; z-index:1;}
+
+  .eyebrow{
+    font-family:'Space Mono', monospace;
+    font-size:0.76rem; letter-spacing:0.08em; text-transform:uppercase;
+    color:var(--teal); margin-bottom:20px;
+    display:inline-flex; align-items:center; gap:8px;
+    padding:6px 12px; border:1px solid var(--line); border-radius:999px;
+    background:var(--bg-elev);
+  }
+  h1{
+    font-weight:700;
+    font-size:clamp(2.1rem, 4.8vw, 3.2rem);
+    line-height:1.08;
+    margin:0 0 22px;
+    max-width:16ch;
+    letter-spacing:-0.01em;
+  }
+  .lede{font-size:1.1rem; max-width:48ch; margin:0 0 32px; color:var(--text-muted);}
+
+  .signup{display:flex; gap:10px; flex-wrap:wrap; margin-bottom:12px;}
+  .signup input[type="email"]{
+    flex:1 1 240px; min-width:0;
+    padding:14px 18px;
+    border:1px solid var(--line);
+    background:var(--bg-elev);
+    border-radius:999px;
+    font-family:'Space Grotesk', sans-serif;
+    font-size:0.95rem;
+    color:var(--text);
+  }
+  .signup input::placeholder{color:var(--text-muted);}
+  .btn{
+    padding:14px 24px;
+    background:var(--amber);
+    color:var(--amber-ink);
+    border:1px solid var(--amber);
+    border-radius:999px;
+    font-family:'Space Mono', monospace;
+    font-size:0.9rem; font-weight:700;
+    cursor:pointer;
+    transition:transform 0.15s ease, box-shadow 0.2s ease;
+    white-space:nowrap;
+    box-shadow:0 0 0 0 var(--amber-glow);
+  }
+  .btn:hover{box-shadow:0 0 22px 2px var(--amber-glow);}
+  .btn:active{transform:scale(0.97);}
+  .form-note{font-size:0.82rem; color:var(--text-muted);}
+
+  .confirm{
+    display:none;
+    font-family:'Space Mono', monospace;
+    font-size:0.9rem; color:var(--teal);
+    border:1px dashed var(--teal);
+    padding:12px 16px; border-radius:14px; margin-bottom:12px;
+  }
+
+  .scroll-hint{margin-top:46px; font-family:'Space Mono', monospace; font-size:0.8rem; color:var(--text-muted);}
+
+  /* ---------- CHART SIGNATURE ---------- */
+  .chart-panel{
+    margin-top:28px;
+    background:var(--bg-elev);
+    border:1px solid var(--line);
+    border-radius:20px;
+    padding:22px 22px 26px;
+    position:relative;
+  }
+  .chart-panel svg{width:100%; height:auto; display:block;}
+  .curve-path{
+    fill:none; stroke:var(--text); stroke-width:2.5; opacity:0.85;
+    stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:1500; stroke-dashoffset:1500;
+    transition:stroke-dashoffset 1.6s ease;
+  }
+  .circle-path{
+    fill:none; stroke:var(--amber); stroke-width:3.5;
+    stroke-linecap:round; stroke-linejoin:round;
+    stroke-dasharray:700; stroke-dashoffset:700;
+    transform:rotate(-3deg);
+    transform-origin:378px 135px;
+    transition:stroke-dashoffset 0.9s ease;
+    transition-delay:1.3s;
+    filter:drop-shadow(0 0 7px var(--amber-glow));
+  }
+  .chart-panel.in .curve-path{stroke-dashoffset:0;}
+  .chart-panel.in .circle-path{stroke-dashoffset:0;}
+
+  .annot-tooltip{
+    position:absolute;
+    left:68%; top:78%;
+    display:flex; align-items:center; gap:8px;
+    background:var(--bg-elev-2);
+    border:1px solid var(--line);
+    border-left:3px solid var(--amber);
+    border-radius:10px;
+    padding:8px 12px;
+    font-family:'Space Mono', monospace;
+    font-size:0.78rem;
+    box-shadow:0 8px 24px rgba(0,0,0,0.18);
+    opacity:0; transform:translateY(6px);
+    transition:opacity 0.4s ease, transform 0.4s ease;
+    transition-delay:2.1s;
+    white-space:nowrap;
+  }
+  .chart-panel.in .annot-tooltip{opacity:1; transform:translateY(0);}
+
+  @media (max-width:600px){
+    .annot-tooltip{left:8%; top:90%; white-space:normal; max-width:84%;}
+  }
+
+  /* ---------- SECTIONS ---------- */
+  section{padding:58px 0;}
+  .rule-top{border-top:1px solid var(--line);}
+
+  .note{max-width:54ch; font-size:1.15rem;}
+  .note mark{
+    background:none; color:var(--text);
+    background-image:linear-gradient(transparent 60%, var(--amber-glow) 60%);
+    padding:0 1px;
+  }
+
+  h2{font-weight:700; font-size:1.55rem; margin:0 0 30px;}
+
+  .steps{display:flex; flex-direction:column; gap:0;}
+  .step{
+    display:grid; grid-template-columns:58px 1fr; gap:18px;
+    padding:22px 0; border-bottom:1px solid var(--line);
+  }
+  .step:last-child{border-bottom:none;}
+  .step .id{font-family:'Space Mono', monospace; font-size:1.2rem; color:var(--amber);}
+  .step h3{margin:0 0 6px; font-size:1.04rem; font-weight:600;}
+  .step p{margin:0; color:var(--text-muted); max-width:52ch;}
+
+  .cards{display:grid; grid-template-columns:repeat(2,1fr); gap:14px;}
+  .card{
+    background:var(--bg-elev); border:1px solid var(--line); border-radius:16px;
+    padding:22px;
+    transition:border-color 0.2s ease, transform 0.2s ease;
+  }
+  .card:hover{border-color:var(--amber); transform:translateY(-2px);}
+  .card .tag{
+    font-family:'Space Mono', monospace; font-size:0.68rem;
+    text-transform:uppercase; letter-spacing:0.05em; color:var(--amber); margin-bottom:10px; display:block;
+  }
+  .card h3{font-size:0.98rem; margin:0 0 8px;}
+  .card p{margin:0; font-size:0.9rem; color:var(--text-muted);}
+
+  @media (max-width:620px){.cards{grid-template-columns:1fr;}}
+
+  .trust-list{list-style:none; margin:0; padding:0; display:grid; gap:14px;}
+  .trust-list li{display:flex; gap:12px; align-items:baseline; font-size:0.97rem;}
+  .trust-list .mark{font-family:'Space Mono', monospace; color:var(--teal); flex-shrink:0;}
+
+  .price-box{
+    background:var(--bg-elev); border:1px solid var(--line); border-radius:18px;
+    padding:28px 30px; display:flex; justify-content:space-between; align-items:center;
+    flex-wrap:wrap; gap:16px;
+  }
+  .price-box .amount{font-family:'Space Mono', monospace; font-size:1.7rem;}
+  .price-box .amount span{font-size:0.9rem; color:var(--text-muted);}
+  .price-box .tag{font-family:'Space Mono', monospace; font-size:0.76rem; color:var(--amber); text-transform:uppercase; letter-spacing:0.04em;}
+
+  details{border-bottom:1px solid var(--line); padding:16px 0;}
+  details summary{cursor:pointer; font-weight:600; font-size:0.97rem; list-style:none;}
+  details summary::-webkit-details-marker{display:none;}
+  details summary::before{content:"+ "; font-family:'Space Mono', monospace; color:var(--amber);}
+  details[open] summary::before{content:"– ";}
+  details p{margin:12px 0 0; color:var(--text-muted); max-width:60ch;}
+
+  .final-cta{text-align:center; padding:68px 0 80px;}
+  .final-cta h2{font-size:1.75rem; margin-bottom:12px;}
+  .final-cta .lede{margin:0 auto 28px;}
+  .final-cta .signup{justify-content:center;}
+  .final-cta .signup input{flex:0 1 320px;}
+
+  footer{padding:24px 0 40px; font-family:'Space Mono', monospace; font-size:0.76rem; color:var(--text-muted);}
+  footer .wrap{display:flex; justify-content:space-between; flex-wrap:wrap; gap:10px;}
+
+  @media (prefers-reduced-motion: reduce){
+    *{transition:none !important; animation:none !important;}
+    .curve-path, .circle-path{stroke-dashoffset:0 !important;}
+    .annot-tooltip{opacity:1 !important; transform:none !important;}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap">
+    <div class="logo">RECUL<span class="dot"></span></div>
+    <div class="nav-right">
+      <span class="nav-tag">Pour traders particuliers</span>
+      <button class="theme-toggle" id="themeToggle" aria-label="Changer de thème" aria-pressed="false">
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v3M12 19v3M4.2 4.2l2.1 2.1M17.7 17.7l2.1 2.1M2 12h3M19 12h3M4.2 19.8l2.1-2.1M17.7 6.3l2.1-2.1"/></svg>
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.6A9 9 0 1 1 11.4 3a7 7 0 0 0 9.6 9.6Z"/></svg>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <div class="eyebrow">● Journal de trading — coach comportemental</div>
+    <h1>Ce qui te fait perdre de l'argent est déjà dans tes trades.</h1>
+    <p class="lede">Importe ton historique, l'agent repère les patterns qui te coûtent cher — sur-trading après une perte, taille qui grossit après un gain, heures où tu perds toujours. Aucun signal, aucun conseil d'achat : juste ton propre miroir.</p>
+
+    <div class="confirm" id="confirm" role="status">✓ Inscrit. On te préviendra dès l'ouverture de la bêta.</div>
+    <form class="signup" id="signupForm">
+      <label for="email" style="position:absolute;left:-9999px;">Adresse email</label>
+      <input type="email" id="email" placeholder="ton@email.fr" required>
+      <button type="submit" class="btn">Rejoindre la liste d'attente</button>
+    </form>
+    <p class="form-note">Aucun engagement. 50 places en bêta, tarif de lancement garanti.</p>
+
+    <p class="scroll-hint">↓ Un pattern détecté, en vrai</p>
+
+    <div class="chart-panel" id="chartPanel">
+      <svg viewBox="0 0 600 230" xmlns="http://www.w3.org/2000/svg" aria-label="Courbe d'équité avec un pattern de sur-trading détecté après une perte">
+        <path class="curve-path" d="M20,150 L60,140 L100,125 L140,132 L180,105 L220,112 L260,90 L300,98 L330,72 L345,95 L355,120 L365,148 L372,142 L379,158 L386,138 L393,162 L400,145 L407,165 L414,150 L430,135 L460,118 L495,100 L530,85 L565,70 L590,60"/>
+        <path class="circle-path" d="M328,140 C320,110 345,72 380,68 C415,64 442,95 438,130 C434,168 405,195 372,192 C342,189 318,172 322,148 C323,143 325,141 328,140"/>
+      </svg>
+      <div class="annot-tooltip">⚑ 7 trades · 9 min après la perte</div>
+    </div>
+  </div>
+</header>
+
+<section class="rule-top">
+  <div class="wrap">
+    <p class="note">Tu sais déjà, au fond, que tu as repris une position trop vite après cette perte. <mark>Ton historique le confirme</mark> — il suffit de le relire correctement, ce que personne ne fait vraiment seul.</p>
+  </div>
+</section>
+
+<section class="rule-top">
+  <div class="wrap">
+    <h2>Comment ça marche</h2>
+    <div class="steps">
+      <div class="step">
+        <div class="id mono">01</div>
+        <div>
+          <h3>Importe ton historique</h3>
+          <p>Export CSV depuis ton broker (IBKR, eToro, DEGIRO, Trade Republic...). Le mapping des colonnes ne se fait qu'une fois.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="id mono">02</div>
+        <div>
+          <h3>L'agent calcule, puis explique</h3>
+          <p>Win rate, drawdown, taille moyenne : tout est calculé en code, jamais par une IA qui pourrait se tromper. L'IA se contente d'expliquer ce qui en ressort.</p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="id mono">03</div>
+        <div>
+          <h3>Tu reçois ton topo chaque semaine</h3>
+          <p>Les patterns détectés, preuves à l'appui — jamais une prédiction sur ton prochain trade.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rule-top">
+  <div class="wrap">
+    <h2>Ce que l'agent repère</h2>
+    <div class="cards">
+      <div class="card">
+        <span class="tag">Pattern</span>
+        <h3>Revenge trading</h3>
+        <p>La fréquence de trades qui explose dans les minutes suivant une perte.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Pattern</span>
+        <h3>Taille qui grossit après un gain</h3>
+        <p>Le moment précis où la confiance devient une prise de risque qui n'a plus de plan.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Pattern</span>
+        <h3>Sur-trading</h3>
+        <p>Les jours où le nombre de trades dépasse largement ta moyenne habituelle.</p>
+      </div>
+      <div class="card">
+        <span class="tag">Pattern</span>
+        <h3>Heures à éviter</h3>
+        <p>Le créneau de la journée où ton win rate s'effondre systématiquement.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="rule-top">
+  <div class="wrap">
+    <h2>Ce qu'on ne fait pas</h2>
+    <ul class="trust-list">
+      <li><span class="mark mono">→</span> On ne te dit jamais quoi acheter ou vendre, ni aujourd'hui ni demain.</li>
+      <li><span class="mark mono">→</span> Aucune connexion à ton broker pour passer des ordres — uniquement un import de ton historique déjà clos.</li>
+      <li><span class="mark mono">→</span> Chaque pattern détecté est montré avec les trades exacts qui le prouvent. Jamais une boîte noire.</li>
+    </ul>
+  </div>
+</section>
+
+<section class="rule-top">
+  <div class="wrap">
+    <h2>Tarif prévisionnel</h2>
+    <div class="price-box">
+      <div class="amount mono">9 € – 19 €<span> / mois</span></div>
+      <div class="tag">Tarif de lancement bloqué pour les 50 premiers inscrits</div>
+    </div>
+  </div>
+</section>
+
+<section class="rule-top">
+  <div class="wrap">
+    <h2>Questions fréquentes</h2>
+    <details>
+      <summary>Est-ce que l'agent peut passer des ordres à ma place ?</summary>
+      <p>Non. Il n'y a aucune connexion d'exécution à ton broker. Tu importes uniquement ton historique de trades déjà clôturés.</p>
+    </details>
+    <details>
+      <summary>Est-ce que ça donne des signaux ou des conseils d'achat ?</summary>
+      <p>Non, jamais. L'agent décrit ce qui s'est déjà passé dans ton historique. Il ne prédit rien et ne recommande aucune action future.</p>
+    </details>
+    <details>
+      <summary>Quels formats de fichiers sont acceptés ?</summary>
+      <p>Un export CSV depuis n'importe quel broker. Le mapping des colonnes se fait manuellement à l'import, une seule fois par broker.</p>
+    </details>
+    <details>
+      <summary>Quand est-ce que je peux commencer ?</summary>
+      <p>La bêta s'ouvre aux 50 premiers inscrits de la liste d'attente ci-dessus.</p>
+    </details>
+  </div>
+</section>
+
+<section class="final-cta rule-top">
+  <div class="wrap">
+    <h2>Rejoins la liste d'attente</h2>
+    <p class="lede">50 places en bêta, tarif de lancement garanti à vie pour les premiers inscrits.</p>
+    <div class="confirm" id="confirm2" role="status">✓ Inscrit. On te préviendra dès l'ouverture de la bêta.</div>
+    <form class="signup" id="signupForm2">
+      <input type="email" placeholder="ton@email.fr" required>
+      <button type="submit" class="btn">Rejoindre la liste d'attente</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <span>RECUL. — Journal de trading &amp; coach comportemental</span>
+    <span>Page de validation — bêta non ouverte</span>
+  </div>
+</footer>
+
+<script>
+  // Thème clair/sombre
+  const root = document.documentElement;
+  const toggle = document.getElementById('themeToggle');
+  toggle.addEventListener('click', () => {
+    const isLight = root.getAttribute('data-theme') === 'light';
+    root.setAttribute('data-theme', isLight ? 'dark' : 'light');
+    toggle.setAttribute('aria-pressed', String(!isLight));
+  });
+
+  // Animation du graphique annoté au scroll
+  const panel = document.getElementById('chartPanel');
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        panel.classList.add('in');
+        obs.disconnect();
+      }
+    });
+  }, { threshold: 0.35 });
+  if (panel) obs.observe(panel);
+
+  // Formulaires — capture visuelle uniquement.
+  // ⚠️ Avant de déployer pour de vrai : brancher sur Formspree/Tally ou une
+  // route API qui stocke l'email en base.
+  function wireForm(formId, confirmId) {
+    const form = document.getElementById(formId);
+    const confirm = document.getElementById(confirmId);
+    if (!form) return;
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const input = form.querySelector('input[type="email"]');
+      if (!input.value || !input.checkValidity()) return;
+      form.style.display = 'none';
+      confirm.style.display = 'block';
+    });
+  }
+  wireForm('signupForm', 'confirm');
+  wireForm('signupForm2', 'confirm2');
+</script>
+
+</body>
+</html>
