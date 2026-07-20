@@ -79,7 +79,7 @@ export default function ImportPage() {
         </a>
         <h1 className="mt-6 text-3xl font-grotesk font-bold">Importer des trades</h1>
         <p className="mt-2 opacity-60 text-sm">
-          Exportez l'historique de vos trades depuis votre broker au format CSV, puis déposez-le ici.
+          Exportez l&apos;historique de vos trades depuis votre broker au format CSV, puis déposez-le ici.
         </p>
       </div>
 
